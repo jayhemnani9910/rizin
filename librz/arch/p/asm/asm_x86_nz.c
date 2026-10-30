@@ -2724,6 +2724,37 @@ static int optest(const RzAsm *a, ut8 *data, const Opcode *op) {
 		RZ_LOG_ERROR("assembler: x86.nz: %s: invalid operands\n", op->mnemonic);
 		return -1;
 	}
+	const Operand *dst = &op->operands[0];
+	const Operand *src = &op->operands[1];
+	if ((dst->type & OT_REGTYPE & OT_GPREG) && (src->type & OT_REGTYPE & OT_GPREG) &&
+		!((dst->type | src->type) & OT_MEMORY)) {
+		// test r/m, reg: 84 /r for bytes, 85 /r otherwise
+		if (op->operands_count != 2 || !(dst->type & src->type & ALL_SIZE)) {
+			return -1;
+		}
+		ut8 rex = 0;
+		if (dst->type & OT_QWORD) {
+			rex |= 8;
+		}
+		if (src->extended) {
+			rex |= 4;
+		}
+		if (dst->extended) {
+			rex |= 1;
+		}
+		if (rex && a->bits != 64) {
+			return -1;
+		}
+		if (!(dst->type & OT_BYTE) && ((a->bits == 16) != !!(dst->type & OT_WORD))) {
+			data[l++] = 0x66;
+		}
+		if (rex) {
+			data[l++] = 0x40 | rex;
+		}
+		data[l++] = (dst->type & OT_BYTE) ? 0x84 : 0x85;
+		data[l++] = 0xc0 | (src->reg & 7) << 3 | (dst->reg & 7);
+		return l;
+	}
 	if (a->bits == 64) {
 		if (op->operands[0].type & OT_MEMORY &&
 			op->operands[0].reg_size & OT_DWORD) {

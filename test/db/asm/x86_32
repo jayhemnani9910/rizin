@@ -2326,6 +2326,7 @@ a "dec ebx" 4b
 a "dec ecx" 49
 a "dec edi" 4f
 a "dec edx" 4a
+a "test ax, cx" 6685c8
 d "addsd xmm0, xmm1" f20f58c1 0x0 (set xmm0 (| (<< (>> (var xmm0) (bv 8 0x40) false) (bv 8 0x40) false) (cast 128 false (fbits (+. rne (float 1 (cast 64 false (var xmm0)) ) (float 1 (cast 64 false (var xmm1)) ))))))
 d "addss xmm0, xmm1" f30f58c1 0x0 (set xmm0 (| (<< (>> (var xmm0) (bv 8 0x20) false) (bv 8 0x20) false) (cast 128 false (fbits (+. rne (float 0 (cast 32 false (var xmm0)) ) (float 0 (cast 32 false (var xmm1)) ))))))
 d "subsd xmm0, xmm1" f20f5cc1 0x0 (set xmm0 (| (<< (>> (var xmm0) (bv 8 0x40) false) (bv 8 0x40) false) (cast 128 false (fbits (-. rne (float 1 (cast 64 false (var xmm0)) ) (float 1 (cast 64 false (var xmm1)) ))))))
